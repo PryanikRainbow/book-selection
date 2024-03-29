@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c491b8531eec05ba41a11d9276a5749",
+    "content-hash": "49ba655f845187b7f53ab4fcf2dbda59",
     "packages": [
         {
             "name": "brick/math",
@@ -3184,6 +3184,68 @@
                 }
             ],
             "time": "2023-11-08T05:53:05+00:00"
+        },
+        {
+            "name": "rosamarsky/laravel-command-bus",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rosamarsky/laravel-command-bus.git",
+                "reference": "6190ee145eecc9b0dc4234aedb1ff1bf6fe050c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rosamarsky/laravel-command-bus/zipball/6190ee145eecc9b0dc4234aedb1ff1bf6fe050c6",
+                "reference": "6190ee145eecc9b0dc4234aedb1ff1bf6fe050c6",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "*",
+                "illuminate/support": "*",
+                "php": "^7.1|^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "^4.6",
+                "sebastian/version": "^1.0.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Rosamarsky\\CommandBus\\CommandBusServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rosamarsky\\CommandBus\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roman Samarsky",
+                    "email": "rosamarsky@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple Command Bus for Laravel framework",
+            "keywords": [
+                "bus",
+                "clear controllers",
+                "command bus",
+                "laravel",
+                "simple sqrs"
+            ],
+            "support": {
+                "issues": "https://github.com/rosamarsky/laravel-command-bus/issues",
+                "source": "https://github.com/rosamarsky/laravel-command-bus/tree/2.0.1"
+            },
+            "time": "2021-09-20T13:20:20+00:00"
         },
         {
             "name": "symfony/console",
