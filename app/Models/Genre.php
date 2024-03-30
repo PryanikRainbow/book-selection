@@ -4,10 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Genre extends Model
 {
     use HasFactory;
 
     protected $fillable = ['name'];
+
+    /**
+     * @return BelongsToMany
+     */
+    public function publicBooks(): BelongsToMany
+    {
+        return $this->belongsToMany(PublicBook::class, 'public_book_genres');
+    }
 }

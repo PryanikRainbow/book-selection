@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Country extends Model
+class Format extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['country_name'];
+    protected $fillable = ['format'];
 
     /**
      * @return HasMany
