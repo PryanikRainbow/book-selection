@@ -11,12 +11,12 @@ class PublicBook extends Model
 {
     use HasFactory;
 
-    protected array $fillable = [
+    protected $fillable = [
         'title',
         'description',
         'edition',
         'publisher_id',
-        'year',
+        'release_date',
         'format_id',
         'pages',
         'country_id',

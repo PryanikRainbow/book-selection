@@ -17,6 +17,8 @@ class Author extends Model
      */
     protected $fillable = ['name'];
 
+    public $timestamps = false;
+
     /**
      * @return BelongsToMany
      */

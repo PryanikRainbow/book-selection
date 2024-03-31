@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->integer('edition');
+            $table->integer('edition')->nullable();
             $table->foreignId('publisher_id')->constrained('publishers');
-            $table->year('year');
+            $table->date('release_date');
             $table->foreignId('format_id')->constrained('formats');
             $table->integer('pages');
             $table->foreignId('country_id')->constrained('countries');

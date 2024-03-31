@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('formats', function (Blueprint $table) {
             $table->id();
-            $table->string('format');
+            $table->string('format')->unique();
         });
     }
 

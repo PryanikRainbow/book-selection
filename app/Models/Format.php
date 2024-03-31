@@ -12,6 +12,8 @@ class Format extends Model
 
     protected $fillable = ['format'];
 
+    public $timestamps = false;
+
     /**
      * @return HasMany
      */

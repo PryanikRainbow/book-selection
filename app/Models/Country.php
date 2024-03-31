@@ -12,6 +12,8 @@ class Country extends Model
 
     protected $fillable = ['country_name'];
 
+    public $timestamps = false;
+
     /**
      * @return HasMany
      */
