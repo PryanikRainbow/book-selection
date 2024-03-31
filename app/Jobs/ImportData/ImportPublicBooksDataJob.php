@@ -13,7 +13,7 @@ use App\Models\Author;
 use App\Models\Country;
 use App\Models\Format;
 use App\Models\Genre;
-use App\Models\PublicBook;
+use App\Models\Book;
 use App\Models\Publisher;
 use Exception;
 
@@ -22,7 +22,7 @@ use Exception;
  * @TODO repo
  */
 // @TODO change className
-class ImportPublicBooksDataJob implements ShouldQueue
+class ImportBooksDataJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -157,7 +157,7 @@ class ImportPublicBooksDataJob implements ShouldQueue
     {
         $edition = is_numeric($data[self::DATA_MAPPING['edition']]) ? $data[self::DATA_MAPPING['edition']] : null;
 
-        $book = PublicBook::firstOrCreate([
+        $book = Book::firstOrCreate([
             'title'        => $data[self::DATA_MAPPING['title']],
             'description'  => $data[self::DATA_MAPPING['description']],
             'edition'      => $edition,
@@ -180,7 +180,7 @@ class ImportPublicBooksDataJob implements ShouldQueue
      */
     private function bookAuthorsImport(int $bookId, array $authorIds): void
     {
-        $book = PublicBook::find($bookId);
+        $book = Book::find($bookId);
 
             $book->authors()->sync($authorIds);
     
@@ -194,7 +194,7 @@ class ImportPublicBooksDataJob implements ShouldQueue
      */
     private function bookGenresImport(int $bookId, array $genreIds): void
     {
-        $book = PublicBook::find($bookId);
+        $book = Book::find($bookId);
         $book->genres()->sync($genreIds);
     }
 }
