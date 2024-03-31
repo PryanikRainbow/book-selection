@@ -17,8 +17,8 @@ class Format extends Model
     /**
      * @return HasMany
      */
-    public function publicBooks(): HasMany
+    public function books(): HasMany
     {
-        return $this->hasMany(PublicBook::class);
+        return $this->hasMany(Book::class);
     }
 }

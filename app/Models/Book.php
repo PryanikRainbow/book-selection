@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class PublicBook extends Model
+class Book extends Model
 {
     use HasFactory;
 
@@ -54,7 +54,7 @@ class PublicBook extends Model
      */
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class, 'public_book_authors');
+        return $this->belongsToMany(Author::class, 'book_authors');
     }
 
     /**
@@ -62,6 +62,6 @@ class PublicBook extends Model
      */
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class, 'public_book_genres');
+        return $this->belongsToMany(Genre::class, 'book_genres');
     }   
 }

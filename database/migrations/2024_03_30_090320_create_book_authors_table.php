@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('public_book_authors', function (Blueprint $table) {
+        Schema::create('book_authors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('public_book_id')->constrained('public_books');
+            $table->foreignId('book_id')->constrained('books');
             $table->foreignId('author_id')->constrained('authors');
         });
     }
@@ -23,6 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('public_book_authors');
+        Schema::table('book_authors', function (Blueprint $table) {
+            $table->dropForeign(['book_id']);
+            $table->dropForeign(['author_id']);
+        });
+        
+        Schema::dropIfExists('book_authors');
     }
 };

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('public_books', function (Blueprint $table) {
+        Schema::create('books', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description');
@@ -31,6 +31,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fublic_books');
+        Schema::table('books', function (Blueprint $table) {
+            $table->dropForeign(['publisher_id']);
+            $table->dropForeign(['format_id']);
+            $table->dropForeign(['country_id']);
+        });
+        
+        Schema::dropIfExists('books');
     }
 };
