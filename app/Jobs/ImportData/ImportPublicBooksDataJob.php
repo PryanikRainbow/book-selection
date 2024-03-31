@@ -22,7 +22,7 @@ use Exception;
  * @TODO repo
  */
 // @TODO change className
-class ImportCSVJob implements ShouldQueue
+class ImportPublicBooksDataJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -52,7 +52,7 @@ class ImportCSVJob implements ShouldQueue
     }
 
     /**
-     * @return void
+     * @return
      */
     public function handle(): void
     {
@@ -67,11 +67,11 @@ class ImportCSVJob implements ShouldQueue
 
             while (($row = fgetcsv($file)) !== false) {
 
-                $authorsIds  = $this->authorsImport(explode(';', $row[0]));
-                $genreIds    = $this->genresImport(explode(';', $row[2]));
-                $countryId   = $this->countryImport($row[9]);
-                $publisherId = $this->publisherImport($row[5]);
-                $formatId    = $this->formatImport($row[7]);
+                $authorsIds  = $this->authorsImport(explode(';', $row[self::DATA_MAPPING['authors']]));
+                $genreIds    = $this->genresImport(explode(';', $row[self::DATA_MAPPING['genre']]));
+                $countryId   = $this->countryImport($row[self::DATA_MAPPING['country']]);
+                $publisherId = $this->publisherImport($row[self::DATA_MAPPING['publisher']]);
+                $formatId    = $this->formatImport($row[self::DATA_MAPPING['format']]);
                 $bookId      = $this->bookImport($row, $countryId, $publisherId, $formatId);
                 $this->bookAuthorsImport($bookId, $authorsIds);
                 $this->bookGenresImport($bookId, $genreIds);
@@ -173,7 +173,7 @@ class ImportCSVJob implements ShouldQueue
     }
 
     /**
-     * @param int $bookId
+     * @param int   $bookId
      * @param array $authorsIds
      *
      * @return $void
@@ -182,14 +182,12 @@ class ImportCSVJob implements ShouldQueue
     {
         $book = PublicBook::find($bookId);
 
-        foreach ($authorIds as $authorId) {
-            $author = Author::findOrFail($authorId);
-            $book->authors()->attach($author);
-        }
+            $book->authors()->sync($authorIds);
+    
     }
 
     /**
-     * @param int $bookId
+     * @param int   $bookId
      * @param array $genreIds
      *
      * @return $void
@@ -197,10 +195,6 @@ class ImportCSVJob implements ShouldQueue
     private function bookGenresImport(int $bookId, array $genreIds): void
     {
         $book = PublicBook::find($bookId);
-
-        foreach ($genreIds as $genreId) {
-            $genre = Genre::findOrFail($genreId);
-            $book->genres()->attach($genre);
-        }
+        $book->genres()->sync($genreIds);
     }
 }
