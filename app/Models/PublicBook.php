@@ -11,6 +11,8 @@ class PublicBook extends Model
 {
     use HasFactory;
 
+    public const TEST_DATA_FILEPATH = '/public/files/test_data.csv';
+
     protected $fillable = [
         'title',
         'description',
