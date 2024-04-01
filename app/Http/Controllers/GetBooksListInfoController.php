@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\BookService;
 use Illuminate\Http\Response;
 
 class GetBooksListInfoController extends Controller
 {
+    /**
+     * @param BookService $bookService
+     */
     public function __construct(private BookService $bookService)
     {
         $this->bookService = $bookService;

@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\BookService;
-use App\Http\Requests\GetBookInfoRequest;
 use Illuminate\Http\Response;
+use App\Models\Book;
 
 class GetBookInfoController extends Controller
 {
+    /**
+     * @param BookService $bookService
+     */
     public function __construct(private BookService $bookService)
     {
         $this->bookService = $bookService;
@@ -16,9 +18,15 @@ class GetBookInfoController extends Controller
 
     /**
      * Handle the incoming request.
+     *
+     * $parm int $id
      */
     public function __invoke(int $id): Response
     {
+        if (!Book::where('id', $id)->exists()) {
+            return new ResponseMessage(['error' => 'Book not found'], 404);
+        }
+
         return new Response([$this->bookService->bookInfo($id)]);
     }
 }
