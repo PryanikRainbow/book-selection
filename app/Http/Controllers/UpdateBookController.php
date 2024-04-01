@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Services\BookService;
-use App\Models\Book;
 use Illuminate\Http\Response;
+use App\Http\Requests\UpdateBookRequest;
 
-class DeleteBookController extends Controller
+class UpdateBookController extends Controller
 {
     /**
      * @param BookService $bookService
@@ -19,13 +20,9 @@ class DeleteBookController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(int $id)
+    public function __invoke(UpdateBookRequest $request): Response
     {
-        if (!Book::where('id', $id)->exists()) {
-            return new Response(['error' => 'Book not found'], 404);
-        }
-
-        $this->bookService->deleteBook($id);
+        $this->bookService->createOrUpdate($request->all());
 
         return new Response([], Response::HTTP_OK);
     }

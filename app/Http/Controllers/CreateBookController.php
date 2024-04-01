@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Services\BookService;
 use Illuminate\Http\Response;
-use App\Http\Requests\CreateBookRequest;
+use App\Http\Requests\BookRequest;
 
 class CreateBookController extends Controller
 {
+    /**
+     * @param BookService $bookService
+     */
     public function __construct(private BookService $bookService)
     {
         $this->bookService = $bookService;
@@ -16,11 +19,11 @@ class CreateBookController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param CreateBookRequest $request
+     * @param BookRequest $request
      *
      * @return Response
      */
-    public function __invoke(CreateBookRequest $request): Response
+    public function __invoke(BookRequest $request): Response
     {
 
         $this->bookService->createOrUpdate($request->all());

@@ -7,6 +7,7 @@ use App\Http\Controllers\GetBooksListInfoController;
 use App\Http\Controllers\GetBookInfoController;
 use App\Http\Controllers\CreateBookController;
 use App\Http\Controllers\DeleteBookController;
+use App\Http\Controllers\UpdateBookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ Route::post('/book/create', CreateBookController::class);
 Route::get('/list', GetBooksListInfoController::class);
 Route::get('/book/{id}', GetBookInfoController::class);
 Route::delete('/book/{id}', DeleteBookController::class);
+Route::patch('/book', UpdateBookController::class);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

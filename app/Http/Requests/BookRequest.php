@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class CreateBookRequest extends BaseRequest
+class BookRequest extends BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.
