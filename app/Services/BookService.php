@@ -8,10 +8,6 @@ use App\Repositories\Country\CountryRepositoryInterface;
 use App\Repositories\Format\FormatRepositoryInterface;
 use App\Repositories\Genre\GenreRepositoryInterface;
 use App\Repositories\Publisher\PublisherRepositoryInterface;
-use App\Models\Book;
-use App\Models\Author;
-use App\Models\Genre;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -91,9 +87,7 @@ class BookService
     {
         try {
             DB::beginTransaction();
-
             $this->bookInsertOrUpdate($data);
-
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -102,10 +96,11 @@ class BookService
     }
 
     /**
-     * 
+     * @return void
      */
-    public function deleteBook(int $id){
-
+    public function deleteBook(int $id): void
+    {
+        $this->bookRepository->delete($id);
     }
 
     /**
