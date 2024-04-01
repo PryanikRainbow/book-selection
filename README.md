@@ -37,6 +37,7 @@ cp .env.example .env
 ### artisan commands are available in the php container
 ```bash
 composer docker exec -it bs-php /bin/bash
+```
 
 ### run migrations
 ```bash
