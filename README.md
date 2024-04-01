@@ -17,6 +17,7 @@
 - Jobs
 - Requests
 - Repositories
+- Migrations
 
 ## Інсталяція:
 
