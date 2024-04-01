@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\BookService;
 use Illuminate\Http\Response;
+use App\Http\Requests\CreateBookRequest;
 
 class CreateBookController extends Controller
 {
@@ -15,14 +15,16 @@ class CreateBookController extends Controller
 
     /**
      * Handle the incoming request.
-     * @param Request $request
+     *
+     * @param CreateBookRequest $request
      *
      * @return Response
      */
-    public function __invoke(Request $request): Response
+    public function __invoke(CreateBookRequest $request): Response
     {
 
         $this->bookService->createOrUpdate($request->all());
+
         return new Response([], Response::HTTP_CREATED);
     }
 }

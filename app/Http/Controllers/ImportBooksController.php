@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ImportData\ImportBooksDataJob;
 use App\Http\Requests\ImportBooksRequest;
+use Illuminate\Http\Response;
 
 class ImportBooksController extends Controller
 {
@@ -17,5 +18,7 @@ class ImportBooksController extends Controller
         $path = $request->file('file')->store('uploads');
 
         ImportBooksDataJob::dispatch($path);
+
+        return new Response([], Response::HTTP_CREATED);
     }
 }
