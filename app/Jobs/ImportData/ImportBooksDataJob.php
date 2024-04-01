@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Log;
 use App\Services\BookService;
 use Exception;
 
-
-/**
- * @TODO repo
- */
-// @TODO change className
 class ImportBooksDataJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -54,7 +49,8 @@ class ImportBooksDataJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            $file = fopen($this->filePath, 'r');
+            $fullFilePath = base_path() . '/storage/app/' . $this->filePath;
+            $file = fopen($fullFilePath, 'r');
 
             if ($this->ignoreHeadCol) {
                 fgetcsv($file);
@@ -69,8 +65,9 @@ class ImportBooksDataJob implements ShouldQueue
                 $bookService->bookInsertOrUpdate(array_combine(self::DATA_MAPPING, $row));
             }
 
-            dd('Y!');
             fclose($file);
+            unlink($fullFilePath);
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

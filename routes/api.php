@@ -3,10 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImportBooksController;
-use App\Http\Controllers\PostTestController;
 use App\Http\Controllers\GetBooksListInfoController;
 use App\Http\Controllers\GetBookInfoController;
 use App\Http\Controllers\CreateBookController;
+use App\Http\Controllers\DeleteBookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +19,11 @@ use App\Http\Controllers\CreateBookController;
 |
 */
 Route::post('/import-books-data', ImportBooksController::class);
+
 Route::post('/book/create', CreateBookController::class);
 Route::get('/list', GetBooksListInfoController::class);
 Route::get('/book/{id}', GetBookInfoController::class);
+Route::delete('/book/{id}', DeleteBookController::class);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
