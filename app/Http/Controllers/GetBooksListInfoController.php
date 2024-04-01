@@ -15,8 +15,10 @@ class GetBooksListInfoController extends Controller
 
     /**
      * Handle the incoming request.
+     *
+     * @return Response $response
      */
-    public function __invoke(Request $request): Response
+    public function __invoke(): Response
     {
         return new Response([$this->bookService->booksListInfo()]);
     }
