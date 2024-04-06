@@ -18,7 +18,7 @@ class BookRequest extends BaseRequest
             'genres'       => 'required|array',
             'genres.*'     => 'required|string|exists:genres,name',
             'description'  => 'required|string',
-            'edition'      => 'required|integer|min:1',
+            'edition'      => 'nullable|integer|min:1',
             'release_date' => 'required|date',
             'publisher'    => 'required|string|max:255',
             'format'       => 'required|string|exists:formats,format',
