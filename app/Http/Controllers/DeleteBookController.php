@@ -13,7 +13,6 @@ class DeleteBookController extends Controller
      */
     public function __construct(private BookService $bookService)
     {
-        $this->bookService = $bookService;
     }
 
     /**
