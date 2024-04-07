@@ -19,7 +19,7 @@ class GetBookInfoController extends Controller
     /**
      * Handle the incoming request.
      *
-     * $parm int $id
+     * @param int $id
      */
     public function __invoke(int $id): Response
     {
