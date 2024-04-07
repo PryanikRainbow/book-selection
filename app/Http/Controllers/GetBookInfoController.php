@@ -24,7 +24,7 @@ class GetBookInfoController extends Controller
     public function __invoke(int $id): Response
     {
         if (!Book::where('id', $id)->exists()) {
-            return new Response(['error' => 'Book not found'], 404);
+            return new Response(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
         }
 
         return new Response([$this->bookService->bookInfo($id)]);
