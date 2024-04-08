@@ -115,7 +115,7 @@ class BookService
         $countryId   = $this->countryRepository->getOrGetNew(['country_name' => $data['country']])->id;
         $publisherId = $this->publisherRepository->getOrGetNew(['name' => $data['publisher']])->id;
         $formatId    = $this->formatRepository->getOrGetNew(['format' => $data['format']])->id;
-        $edition     = is_numeric($data['edition']) ? $data['edition'] : null;
+        $edition     = isset($data['edition']) && is_numeric($data['edition']) ? $data['edition'] : null;
 
         $book        = $this->bookRepository->getOrGetNew(
             [
