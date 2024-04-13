@@ -12,7 +12,7 @@ class UpdateBookRequest extends BookRequest
      */
     public function rules(): array
     {
-        $rules = parent::rules();
+        $rules       = parent::rules();
         $rules['id'] = 'required|exists:books,id';
 
         return $rules;

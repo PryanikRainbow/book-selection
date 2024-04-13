@@ -23,7 +23,7 @@ class BaseRequest extends FormRequest
             $validator,
             response()->json([
                 'message' => 'Validation error',
-                'errors' => $validator->errors(),
+                'errors'  => $validator->errors(),
             ], Response::HTTP_BAD_REQUEST)
         );
     }
