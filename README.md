@@ -19,7 +19,7 @@
 - Repositories
 - Migrations
 
-## Інсталяція:
+## installation:
 
 ### clone git repository
 ```bash
@@ -37,7 +37,7 @@ cp .env.example .env
 
 ### artisan commands are available in the php container
 ```bash
-composer docker exec -it bs-php /bin/bash
+docker exec -it bs-php /bin/bash
 ```
 
 ### run migrations
