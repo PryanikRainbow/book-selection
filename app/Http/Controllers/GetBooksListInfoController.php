@@ -22,6 +22,6 @@ class GetBooksListInfoController extends Controller
      */
     public function __invoke(): Response
     {
-        return new Response([$this->bookService->booksListInfo()]);
+        return new Response($this->bookService->booksListInfo());
     }
 }

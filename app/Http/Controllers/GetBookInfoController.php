@@ -27,6 +27,6 @@ class GetBookInfoController extends Controller
             return new Response(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return new Response([$this->bookService->bookInfo($id)]);
+        return new Response($this->bookService->bookInfo($id));
     }
 }
