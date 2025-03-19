@@ -25,6 +25,9 @@ class Book extends Model
         'ISBN',
     ];
 
+    protected $casts = [
+        'release_date' => 'datetime',
+    ];
     /**
      * @return BelongsTo
      */
@@ -54,7 +57,7 @@ class Book extends Model
      */
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class, 'book_authors');
+        return $this->belongsToMany(Author::class, 'book_author');
     }
 
     /**
@@ -62,6 +65,6 @@ class Book extends Model
      */
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class, 'book_genres');
+        return $this->belongsToMany(Genre::class, 'book_genre');
     }   
 }

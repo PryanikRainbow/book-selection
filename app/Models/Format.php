@@ -10,7 +10,7 @@ class Format extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['format'];
+    protected $fillable = ['name'];
 
     public $timestamps = false;
 
