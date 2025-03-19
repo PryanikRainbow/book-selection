@@ -2,12 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ImportBooksController;
-use App\Http\Controllers\GetBooksListInfoController;
-use App\Http\Controllers\GetBookInfoController;
-use App\Http\Controllers\CreateBookController;
-use App\Http\Controllers\DeleteBookController;
-use App\Http\Controllers\UpdateBookController;
+use App\Http\Controllers\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,13 +14,16 @@ use App\Http\Controllers\UpdateBookController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('/import-books-data', ImportBooksController::class);
 
-Route::post('/book/create', CreateBookController::class);
-Route::get('/list', GetBooksListInfoController::class);
-Route::get('/book/{id}', GetBookInfoController::class);
-Route::delete('/book/{id}', DeleteBookController::class);
-Route::put('/book', UpdateBookController::class);
+Route::prefix('books')->group(function () {
+    Route::get('/', [BookController::class, 'index']);
+    Route::post('/', [BookController::class, 'create']);
+    Route::get('/{book}', [BookController::class, 'show']);
+    Route::put('/{book}', [BookController::class, 'update']);
+    Route::delete('/{book}', [BookController::class, 'remove']);
+
+    Route::post('/import', [BookController::class, 'import']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

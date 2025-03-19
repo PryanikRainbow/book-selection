@@ -2,167 +2,245 @@
 
 namespace App\Services;
 
-use App\Repositories\Author\AuthorRepositoryInterface;
-use App\Repositories\Book\BookRepositoryInterface;
-use App\Repositories\Country\CountryRepositoryInterface;
-use App\Repositories\Format\FormatRepositoryInterface;
-use App\Repositories\Genre\GenreRepositoryInterface;
-use App\Repositories\Publisher\PublisherRepositoryInterface;
-use Illuminate\Support\Facades\DB;
+use App\Exceptions\AppException;
+use App\Models\Book;
+use App\Models\Country;
+use App\Models\Format;
+use App\Models\Publisher;
 use Exception;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BookService
 {
-
     /**
      * BookService constructor.
      *
-     * @param AuthorRepositoryInterface    $authorRepository
-     * @param BookRepositoryInterface      $bookRepository
-     * @param CountryRepositoryInterface   $countryRepository
-     * @param FormatRepositoryInterface    $formatRepository
-     * @param GenreRepositoryInterface     $genreRepository
-     * @param PublisherRepositoryInterface $publisherRepository
+     * @param BookAuthorService $bookAuthorService
+     * @param BookGenreService  $bookAuthorService
      */
     public function __construct(
-        private AuthorRepositoryInterface    $authorRepository,
-        private BookRepositoryInterface      $bookRepository,
-        private CountryRepositoryInterface   $countryRepository,
-        private FormatRepositoryInterface    $formatRepository,
-        private GenreRepositoryInterface     $genreRepository,
-        private PublisherRepositoryInterface $publisherRepository,
-    ) {
-    }
+        private BookAuthorService $bookAuthorService,
+        private BookGenreService  $bookGenreService,
+    ) {}
 
     /**
-     * @return array
+     * @param array $input
+     * 
+     * @return LengthAwarePaginator
      */
-    public function booksListInfo(): array
+    public function getList(array $input): LengthAwarePaginator
     {
-        return $this->bookRepository->all()->map(function ($book) {
-            return [
-                'title' => $book->title,
-                'year' => date('Y', strtotime($book->release_date)),
-                'authors' => $book->authors->pluck('name')->toArray(),
-                'publisher' => $book->publisher->name,
-            ];
-        })->toArray();
-    }
+        try {
+            $query = Book::query()
+                ->select(['id', 'title', 'release_date', 'publisher_id'])
+                ->with([
+                    'authors:id,name',
+                    'publisher:id,name',
+                ]);
 
-    /**
-     * @param int $id
-     *
-     * @return array|null
-     */
-    public function bookInfo(int $id): array|null
-    {
-        $book = $this->bookRepository->byId($id);
+            $perPage = $input['per_page'] ?? $query->count();
 
-        if ($book) {
-            return [
-                'id'           => $id,
-                'title'        => $book->title,
-                'authors'      => $book->authors->pluck('name')->toArray(),
-                'genres'       => $book->genres->pluck('name')->toArray(),
-                'description'  => $book->description,
-                'edition'      => $book->edition,
-                'release_date' => date($book->release_date),
-                'publisher'    => $book->publisher->name,
-                'format'       => $book->format->format,
-                'pages'        => $book->pages,
-                'country'      => $book->country->country_name,
-                'ISBN'         => $book->ISBN
-            ];
+            return $query->paginate($perPage);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error(
+                'Something went wrong: Attempt to get book list failed',
+                [
+                    'message' => $e->getMessage(),
+                    'input'   => $input,
+                ]
+            );
+
+            throw new AppException('Something went wrong: Attempt to get book list failed');
         }
-
-        return null;
     }
 
     /**
      * @param array $data
      *
-     * @return void
+     * @return Book
      */
-    public function createOrUpdate(array $data): void
+    public function create(array $data): Book
     {
         try {
             DB::beginTransaction();
-            $this->bookInsertOrUpdate($data);
+
+            $countryId   = Country::firstOrCreate(['name' => $data['country']])->id;
+            $publisherId = Publisher::firstOrCreate(['name' => $data['publisher']])->id;
+            $formatId    = Format::firstOrCreate(['name' => $data['format']])->id;
+            $edition     = isset($data['edition']) && is_numeric($data['edition']) ? $data['edition'] : null;
+
+            /** @var Book $book */
+            $book        = Book::create(
+                [
+                    'title'        => $data['title'],
+                    'description'  => $data['description'],
+                    'edition'      => $edition,
+                    'publisher_id' => $publisherId,
+                    'release_date' => $data['release_date'],
+                    'format_id'    => $formatId,
+                    'pages'        => $data['pages'],
+                    'country_id'   => $countryId,
+                    'ISBN'         => $data['ISBN'],
+                ]
+            );
+
+            $this->bookAuthorService->syncAuthors($book, $data['authors']);
+            $this->bookGenreService->syncGenres($book, $data['genres']);
+
             DB::commit();
+
+            return $book;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new Exception($e->getMessage());;
+
+            Log::error(
+                'Something went wrong: Attempt to create book failed',
+                [
+                    'message' => $e->getMessage(),
+                    'input'   => $data,
+                ]
+            );
+
+            throw new AppException('Something went wrong: Attempt to create book failed');
         }
     }
 
     /**
+     * @param Book  $book
+     * @param array $data
+     *
+     * @return Book
+     */
+    public function update(Book $book, array $data): Book
+    {
+        try {
+            DB::beginTransaction();
+
+            $countryId   = Country::firstOrCreate(['name' => $data['country']])->id;
+            $publisherId = Publisher::firstOrCreate(['name' => $data['publisher']])->id;
+            $formatId    = Format::firstOrCreate(['name' => $data['format']])->id;
+            $edition     = isset($data['edition']) && is_numeric($data['edition']) ? $data['edition'] : null;
+
+            $book->update(
+                [
+                    'title'        => $data['title'],
+                    'description'  => $data['description'],
+                    'edition'      => $edition,
+                    'publisher_id' => $publisherId,
+                    'release_date' => $data['release_date'],
+                    'format_id'    => $formatId,
+                    'pages'        => $data['pages'],
+                    'country_id'   => $countryId,
+                    'ISBN'         => $data['ISBN'],
+                ]
+            );
+
+            $this->bookAuthorService->syncAuthors($book, $data['authors']);
+            $this->bookGenreService->syncGenres($book, $data['genres']);
+
+            DB::commit();
+
+            return $book;
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error(
+                'Something went wrong: Attempt to update book failed',
+                [
+                    'message' => $e->getMessage(),
+                    'input'   => $data,
+                ]
+            );
+
+            throw new AppException('Something went wrong: Attempt to update book failed');
+        }
+
+
+        return $book;
+    }
+
+    /**
+     * @param Book $book
+     * 
      * @return void
      */
-    public function deleteBook(int $id): void
+    public function delete(Book $book): void
     {
-        $this->bookRepository->delete($id);
+        try {
+            DB::beginTransaction();
+
+            $book->authors()->detach();
+            $book->genres()->detach();
+
+            $book->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error(
+                'Something went wrong: Attempt to delete book failed',
+                [
+                    'message' => $e->getMessage(),
+                    'book_id' => $book->id,
+                ]
+            );
+
+            throw new AppException('Something went wrong: Attempt to delete book failed');
+        }
     }
 
     /**
      * @param array $data
      *
-     * @return void
+     * @return Book
      */
-    public function bookInsertOrUpdate($data): void
-    {       
-        $authorsIds  = $this->addAuthors($data['authors']);
-        $genreIds    = $this->addGenres($data['genres']);
-        $countryId   = $this->countryRepository->getOrGetNew(['country_name' => $data['country']])->id;
-        $publisherId = $this->publisherRepository->getOrGetNew(['name' => $data['publisher']])->id;
-        $formatId    = $this->formatRepository->getOrGetNew(['format' => $data['format']])->id;
-        $edition     = isset($data['edition']) && is_numeric($data['edition']) ? $data['edition'] : null;
-
-        $book        = $this->bookRepository->getOrGetNew(
-            [
-                'title'        => $data['title'],
-                'description'  => $data['description'],
-                'edition'      => $edition,
-                'publisher_id' => $publisherId,
-                'release_date' => $data['release_date'],
-                'format_id'    => $formatId,
-                'pages'        => $data['pages'],
-                'country_id'   => $countryId,
-                'ISBN'         => $data['ISBN'],
-            ]
-        );
-        $book->authors()->sync($authorsIds);
-        $book->genres()->sync($genreIds);
-    }
-
-    /**
-     * @param array $authors
-     *
-     * @return array
-     */
-    private function addAuthors(array $authors): array
+    public function getOrCreate(array $data): Book
     {
-        $authorIds = [];
+        try {
+            DB::beginTransaction();
 
-        foreach ($authors as $authorName) {
-            $authorIds[] = $this->authorRepository->getOrGetNew(['name' => $authorName])->id;
+            $countryId   = Country::firstOrCreate(['name' => $data['country']])->id;
+            $publisherId = Publisher::firstOrCreate(['name' => $data['publisher']])->id;
+            $formatId    = Format::firstOrCreate(['name' => $data['format']])->id;
+            $edition     = isset($data['edition']) && is_numeric($data['edition']) ? $data['edition'] : null;
+
+            $book        = Book::firstOrCreate(
+                [
+                    'title'        => $data['title'],
+                    'description'  => $data['description'],
+                    'edition'      => $edition,
+                    'publisher_id' => $publisherId,
+                    'release_date' => $data['release_date'],
+                    'format_id'    => $formatId,
+                    'pages'        => $data['pages'],
+                    'country_id'   => $countryId,
+                    'ISBN'         => $data['ISBN'],
+                ]
+            );
+
+            $this->bookAuthorService->syncAuthors($book, $data['authors']);
+            $this->bookGenreService->syncGenres($book, $data['genres']);
+
+            DB::commit();
+
+            return $book;
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error(
+                'Something went wrong: Attempt to get/create book failed',
+                [
+                    'message'   => $e->getMessage(),
+                    'data_book' => $data,
+                ]
+            );
+
+            throw new AppException('Something went wrong: Attempt to get/create book failed');
         }
-
-        return $authorIds;
-    }
-
-    /**
-     * @param array $genres
-     *
-     * @return array
-     */
-    private function addGenres(array $genres): array
-    {
-        $genreIds = [];
-
-        foreach ($genres as $genre) {
-            $genreIds[] = $this->genreRepository->getOrGetNew(['name' => $genre])->id;
-        }
-
-        return $genreIds;
     }
 }

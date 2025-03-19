@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->integer('edition')->nullable();
-            $table->foreignId('publisher_id')->constrained('publishers');
+            $table->foreignId('publisher_id')->constrained();
             $table->date('release_date');
-            $table->foreignId('format_id')->constrained('formats');
+            $table->foreignId('format_id')->constrained();
             $table->integer('pages');
-            $table->foreignId('country_id')->constrained('countries');
+            $table->foreignId('country_id')->constrained();
             $table->string('ISBN',13);
             $table->timestamps();
         });

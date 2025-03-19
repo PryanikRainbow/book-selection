@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
-class ImportBooksRequest extends BaseRequest
+use App\Http\Requests\BaseRequest;
+
+class BaseListRequest extends BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -12,7 +14,8 @@ class ImportBooksRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|mimes:csv,txt',
+            'page'      => ['sometimes', 'integer', 'min:1'],
+            'per_page'  => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }
