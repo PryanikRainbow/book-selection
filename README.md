@@ -1,4 +1,4 @@
-# BOOK COLLECTION API (CRUD)
+# BOOK COLLECTION API (CRUD) + IMPORT FROM CSV
 
 ## Used Technologies:
 - Laravel 10
@@ -16,7 +16,7 @@
 - Services
 - Jobs
 - Requests
-- Repositories
+- Resources
 - Migrations
 
 ## installation:
